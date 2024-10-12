@@ -17,7 +17,6 @@ public class pepasm{
         pepInstruction.put("STOP", "00");
         pepInstruction.put("CPBA", "B0");
         pepInstruction.put("BRNE", "1A");
-        pepInstruction.put(".END", "zz");
     }
 
     public static void main(String[] args) {
@@ -40,8 +39,7 @@ public class pepasm{
             }
 
             if (!output.isEmpty()) {
-                output.setLength(output.length() - 9);
-                output.append("zz");
+                output.setLength(output.length() );
             }
 
             System.out.println(output.toString().trim());
@@ -51,11 +49,19 @@ public class pepasm{
 
     private void processLine(String line, StringBuilder output) {
         String[] parts = line.split("\\s+");
-        String opcode = pepInstruction.get(parts[0]);
-        if (opcode != null) {
-            output.append(opcode).append(" ");
-            String operand = (parts.length > 1) ? parseOperand(parts[1]) : "00";
-            output.append(operand).append(" ");
+        String instruction  = parts[0];
+        String operandcode = pepInstruction.get(instruction);
+
+        if (operandcode != null) {
+            output.append(operandcode).append(" ");
+            if (parts.length > 1) {
+                String operand = parseOperand(parts[1]);
+                output.append(operand).append(" ");
+            } else {
+                if (!instruction.equals("ASLA") && !instruction.equals("ASRA") && !instruction.equals("STOP")) {
+                    output.append("00 ").append(" ");
+                }
+            }
         }
     }
 
